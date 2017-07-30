@@ -1,0 +1,8 @@
+<md-list>
+  <md-list-item *ngFor="let property of propertiesToDisplay">
+    <h3 md-line class="person-label">{{ property | personLabel }}:</h3>
+    <p md-line>
+      {{ person[property] }}
+    </p>
+  </md-list-item>
+</md-list>

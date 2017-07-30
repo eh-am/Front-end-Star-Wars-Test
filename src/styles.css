@@ -1,4 +1,7 @@
 @import "~@angular/material/prebuilt-themes/indigo-pink.css";
-@import "~https://fonts.googleapis.com/icon?family=Roboto";
+@import "~https://fonts.googleapis.com/icon?family=Roboto:400,700";
 /* You can add global styles to this file, and also import other style files */
-body {margin: 0;}
+body {
+    margin: 0;
+    font-family: Roboto,"Helvetica Neue",sans-serif;
+}

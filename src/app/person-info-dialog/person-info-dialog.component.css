@@ -1,0 +1,21 @@
+.species {
+    font-size: 14px;
+}
+
+.mat-dialog-container {
+    min-width: 400px;
+}
+
+app-person-info-dialog .mat-list-item-content{
+    padding-left: 0 !important;
+}
+
+app-person-info-dialog .mat-dialog-actions h3{width: 100%}
+
+app-person-info-dialog .person-label {
+    font-weight: bold !important;
+}
+
+app-person-info-dialog md-spinner{
+    margin: auto !important;
+}

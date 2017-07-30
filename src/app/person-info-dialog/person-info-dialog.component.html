@@ -1,0 +1,21 @@
+<h1 md-dialog-title>
+  {{ person.name }}
+  <div class="species">{{ person.speciesContent.name }}</div>
+</h1>
+
+<!-- <h1 md-dialog-title>Dialog</h1> -->
+<!-- <div md-dialog-content *ngif="loading">
+</div> -->
+<md-divider></md-divider>
+<div md-dialog-content >
+  <md-spinner *ngIf="loading; else finishedLoading"></md-spinner>
+
+  <ng-template #finishedLoading>
+    <app-person-info [person]="person"></app-person-info>
+  </ng-template>
+</div>
+<md-divider></md-divider>
+<div md-dialog-actions>
+  <h3>People from same planet</h3>
+  <button *ngFor="let person of peopleFromSamePlanet" md-button (click)="onClickPerson(person)">{{ person.name }}</button>
+</div>
