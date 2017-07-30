@@ -23,6 +23,7 @@ export class PersonInfoDialogComponent implements OnInit {
 
   ngOnInit() {
     this.person.speciesContent = {};
+    this.person.planet = {};
     this.peopleFromSamePlanet = [];
     this.loading = true;
 
@@ -35,6 +36,8 @@ export class PersonInfoDialogComponent implements OnInit {
     this.apiService
       .getPlanet(this.person.homeworld)
       .subscribe(res => {
+        this.person.planet = res;
+
         Observable.forkJoin(
           res.residents.map(resident => this.apiService.getPerson(resident))
         ).subscribe(res => {

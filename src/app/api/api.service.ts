@@ -7,9 +7,9 @@ export class ApiService {
 
   constructor(private http: Http) { }
 
-  getAllPeople(page = 1) {
+  getAllPeople(page = 1, query = "") {
     return this.http
-      .get(`//swapi.co/api/people/?page=${page}`)
+      .get(`//swapi.co/api/people/?page=${page}&search=${query}`)
       .map(res => res.json())
       .catch((error:any) => Observable.throw(error.json().error) || 'Error');
   }

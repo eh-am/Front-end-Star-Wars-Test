@@ -16,6 +16,6 @@
 </div>
 <md-divider></md-divider>
 <div md-dialog-actions>
-  <h3>People from same planet</h3>
+  <h3>People from same planet ({{ person.planet.name }})</h3>
   <button *ngFor="let person of peopleFromSamePlanet" md-button (click)="onClickPerson(person)">{{ person.name }}</button>
 </div>

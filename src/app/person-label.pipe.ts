@@ -6,7 +6,7 @@ import { Pipe, PipeTransform } from '@angular/core';
 export class PersonLabelPipe implements PipeTransform {
 
   transform(value: any, args?: any): any {
-    return this.capitalize(value).replace('_', ' ');
+    return this.capitalize(value).replace(new RegExp('_', 'g'), ' ');
   }
 
   capitalize(value){

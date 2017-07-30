@@ -1,14 +1,13 @@
 <md-toolbar color="primary">
-  <md-input-container floatPlaceholder="never">
-    <input mdInput placeholder="Search a Star Wars Character">
+   <md-input-container floatPlaceholder="never"> 
+    <input mdInput placeholder="Search for a Star Wars Person" [ngModel]="search" (ngModelChange)="searchFor($event)">
   </md-input-container>
 </md-toolbar>
 
-<!-- <div> {{ people | json }}</div> -->
 <md-list>
   <md-list-item md-button *ngFor="let person of people | paginate: { itemsPerPage: 10, currentPage: currentPage, totalItems: totalPeople }">
-     <button md-button (click)="onClickPerson(person)">{{ person.name }}</button>
-    <md-divider></md-divider>
+     <button md-button (click)="onClickPerson(person)" md-line>{{ person.name }}</button> 
+     <md-divider></md-divider>
   </md-list-item>
 </md-list>
 
