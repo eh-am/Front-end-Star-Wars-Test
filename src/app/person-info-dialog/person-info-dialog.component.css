@@ -2,10 +2,6 @@
     font-size: 14px;
 }
 
-.mat-dialog-container {
-    min-width: 400px;
-}
-
 app-person-info-dialog .mat-list-item-content{
     padding-left: 0 !important;
 }
