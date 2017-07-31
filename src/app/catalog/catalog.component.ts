@@ -4,7 +4,7 @@ import { ApiService } from '../api/api.service';
 import { Observable } from 'rxjs/rX';
 import { Person } from '../person.model';
 import { MdDialog, MdDialogRef, MdSort } from '@angular/material';
-import {BehaviorSubject} from 'rxjs/BehaviorSubject';
+import { BehaviorSubject } from 'rxjs/BehaviorSubject';
 
 import { PersonInfoDialogComponent } from '../person-info-dialog/person-info-dialog.component';
 
@@ -13,11 +13,10 @@ import { PersonInfoDialogComponent } from '../person-info-dialog/person-info-dia
   selector: 'app-catalog',
   templateUrl: './catalog.component.html',
   styleUrls: ['./catalog.component.css'],
-  providers: [ ApiService ]
+  providers: [ApiService]
 })
 
 export class CatalogComponent implements OnInit {
-
   @Input() search: String = "";
 
   people: Person[];
@@ -47,21 +46,6 @@ export class CatalogComponent implements OnInit {
       });
   }
 
-  loadPeople(){
-    let ppl = [];
-    this.apiService.getAllPeopleAtOnce().subscribe(res => {
-      ppl = ppl.concat(Array.from(res));
-    }, () => {
-      console.log('error')
-    }, (res) => {
-      this.people = ppl;
-
-        
-      // TODO
-      this.loading = false;
-    });
-  }
-
   onClickPerson($event) {
     let dialogRef = this.dialog.open(PersonInfoDialogComponent,{
       data: $event
@@ -71,10 +55,6 @@ export class CatalogComponent implements OnInit {
       // reopen with the person it was told to
       if (person) this.onClickPerson(person);
     })
-  }
-
-  searchFor(person) {
-    // this.loadPage(1, person);
   }
 }
 

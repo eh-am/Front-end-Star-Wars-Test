@@ -1,23 +1,25 @@
 <md-toolbar color="primary">
-   <md-input-container floatPlaceholder="never"> 
+   <md-input-container floatPlaceholder="never" color='accent'> 
     <input mdInput placeholder="Search for a Star Wars Person" #filter>
   </md-input-container>
 </md-toolbar>
 
 
 <md-table #table [dataSource]="dataSource" mdSort>
-    <!-- Name Column -->
+    <!-- Name  -->
     <ng-container cdkColumnDef="name">
       <md-header-cell *cdkHeaderCellDef md-sort-header> Name </md-header-cell>
       <md-cell *cdkCellDef="let row"> {{row.name}} </md-cell>
     </ng-container>
 
+    <!-- Gender  -->
     <ng-container cdkColumnDef="gender">
       <md-header-cell *cdkHeaderCellDef md-sort-header> Gender </md-header-cell>
       <md-cell *cdkCellDef="let row"> {{row.gender}} </md-cell>
     </ng-container>
 
-        <ng-container cdkColumnDef="birth_year">
+    <!-- Birth Year  -->
+    <ng-container cdkColumnDef="birth_year">
       <md-header-cell *cdkHeaderCellDef md-sort-header> Birth Year </md-header-cell>
       <md-cell *cdkCellDef="let row"> {{row.birth_year}} </md-cell>
     </ng-container>
