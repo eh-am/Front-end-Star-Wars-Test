@@ -1,8 +1,11 @@
-import { Component, OnInit, Input } from '@angular/core';
+import { Component, OnInit, Input, ViewChild } from '@angular/core';
+import { DataSource } from '@angular/cdk';
 import { ApiService } from '../api/api.service';
+import { Observable } from 'rxjs/rX';
 import { Person } from '../person.model';
-import { MdDialog, MdDialogRef } from '@angular/material';
-// import { PersonInfoComponent } from '../person-info/person-info.component';
+import { MdDialog, MdDialogRef, MdSort } from '@angular/material';
+import {BehaviorSubject} from 'rxjs/BehaviorSubject';
+
 import { PersonInfoDialogComponent } from '../person-info-dialog/person-info-dialog.component';
 
 
@@ -18,25 +21,37 @@ export class CatalogComponent implements OnInit {
   @Input() search: String = "";
 
   people: Person[];
+  loading: Boolean = true;
+
   currentPage: number = 1;
   totalPeople: number = 0;
+
+  personDatabase = new PersonDatabase(this.apiService);
+  dataSource: PeopleDataSource | null;
+  displayedColumns = ['name', 'gender', 'birth_year'];
+  @ViewChild(MdSort) sort: MdSort;
+
 
   constructor(private apiService: ApiService, public dialog: MdDialog) {}
 
   ngOnInit() {
-    this.loadPage(this.currentPage);
+    this.dataSource = new PeopleDataSource(this.personDatabase, this.sort);
+    // this.loadPeople();
   }
 
-  loadPage(page:number, query = "") {
-    this.apiService.getAllPeople(page, query).subscribe(res => {
-      this.totalPeople = res.count;
-      this.people = res.results;
-      this.currentPage = page;
+  loadPeople(){
+    let ppl = [];
+    this.apiService.getAllPeopleAtOnce().subscribe(res => {
+      ppl = ppl.concat(Array.from(res));
+    }, () => {
+      console.log('error')
+    }, (res) => {
+      this.people = ppl;
+
+        
+      // TODO
+      this.loading = false;
     });
-  }
-
-  onPageChange($event) {
-    this.loadPage($event);
   }
 
   onClickPerson($event) {
@@ -51,6 +66,79 @@ export class CatalogComponent implements OnInit {
   }
 
   searchFor(person) {
-    this.loadPage(1, person);
+    // this.loadPage(1, person);
   }
+}
+
+
+export class PeopleDataSource extends DataSource<any> {
+  dataChange: BehaviorSubject<Person[]> = new BehaviorSubject<Person[]>([]);
+
+  constructor(private _personDatabase: PersonDatabase, private _sort: MdSort) {
+    super();
+  }
+  
+  /** Connect function called by the table to retrieve one stream containing the data to render. */
+  connect(): Observable<Person[]> {
+    const displayDataChanges = [
+      this._personDatabase.dataChange,
+      this._sort.mdSortChange,
+    ];
+
+    return Observable.merge(...displayDataChanges).map(() => {
+      return this.getSortedData();
+    });
+  }
+
+  getSortedData(): Person[] {
+    const data = this._personDatabase.data.slice();
+    if (!this._sort.active || this._sort.direction == '') { return data; }
+
+    return data.sort((a, b) => {
+      let propertyA: String = '';
+      let propertyB: String = '';
+
+      switch (this._sort.active) {
+        case 'name': [propertyA, propertyB] = [a.name, b.name]; break;
+        case 'gender': [propertyA, propertyB] = [a.gender, b.gender]; break;
+        case 'birth_year': [propertyA, propertyB] = [a.birth_year, b.birth_year]; break;
+      }
+
+      let valueA = isNaN(+propertyA) ? propertyA : +propertyA;
+      let valueB = isNaN(+propertyB) ? propertyB : +propertyB;
+
+      return (valueA < valueB ? -1 : 1) * (this._sort.direction == 'asc' ? 1 : -1);
+    });
+  }
+
+  disconnect() {}
+}
+
+
+export class PersonDatabase {
+  /** Stream that emits whenever the data has been modified. */
+  dataChange: BehaviorSubject<Person[]> = new BehaviorSubject<Person[]>([]);
+  get data(): Person[] { return this.dataChange.value; }
+
+  constructor(private apiService: ApiService) {
+    this.loadPeople();
+  }
+
+  loadPeople(){
+    let ppl = [];
+    this.apiService.getAllPeopleAtOnce().subscribe(res => {
+      ppl = ppl.concat(Array.from(res));
+    }, () => {
+      console.log('error')
+    }, (res) => {
+      this.dataChange.next(ppl);
+      console.log('dataChange', this.dataChange);
+      // this.people = ppl;
+      // this.dataChange.next()
+
+      // TODO
+      // this.loading = false;
+    });
+  }  
+
 }

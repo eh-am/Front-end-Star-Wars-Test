@@ -4,6 +4,7 @@ import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 import { HttpModule } from '@angular/http';
 import { NgxPaginationModule } from 'ngx-pagination';
 import { FormsModule } from '@angular/forms';
+import { CdkTableModule } from '@angular/cdk';
 
 import { AppComponent } from './app.component';
 import { CatalogComponent } from './catalog/catalog.component';
@@ -16,7 +17,9 @@ import {
   MdToolbarModule,
   MdInputModule,
   MdDialogModule,
-  MdProgressSpinnerModule
+  MdProgressSpinnerModule,
+  MdTableModule,
+  MdSortModule
 } from '@angular/material';
 import { PersonInfoComponent } from './person-info/person-info.component';
 import { PersonInfoDialogComponent } from './person-info-dialog/person-info-dialog.component';
@@ -41,7 +44,10 @@ import { PersonLabelPipe } from './person-label.pipe';
     MdToolbarModule,
     MdDialogModule,
     MdProgressSpinnerModule,
-    FormsModule
+    MdTableModule,
+    FormsModule,
+    CdkTableModule,
+    MdSortModule
   ],
   providers: [
     ApiService
