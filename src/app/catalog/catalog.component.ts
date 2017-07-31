@@ -1,4 +1,4 @@
-import { Component, OnInit, Input, ViewChild } from '@angular/core';
+import { Component, OnInit, Input, ViewChild, ElementRef } from '@angular/core';
 import { DataSource } from '@angular/cdk';
 import { ApiService } from '../api/api.service';
 import { Observable } from 'rxjs/rX';
@@ -29,14 +29,22 @@ export class CatalogComponent implements OnInit {
   personDatabase = new PersonDatabase(this.apiService);
   dataSource: PeopleDataSource | null;
   displayedColumns = ['name', 'gender', 'birth_year'];
+  
   @ViewChild(MdSort) sort: MdSort;
-
+  @ViewChild('filter') filter: ElementRef;
 
   constructor(private apiService: ApiService, public dialog: MdDialog) {}
 
   ngOnInit() {
     this.dataSource = new PeopleDataSource(this.personDatabase, this.sort);
-    // this.loadPeople();
+    
+    Observable.fromEvent(this.filter.nativeElement, 'keyup')
+      .debounceTime(150)
+      .distinctUntilChanged()
+      .subscribe(() => {
+        if (!this.dataSource) { return; }
+        this.dataSource.filter = this.filter.nativeElement.value;
+      });
   }
 
   loadPeople(){
@@ -73,6 +81,9 @@ export class CatalogComponent implements OnInit {
 
 export class PeopleDataSource extends DataSource<any> {
   dataChange: BehaviorSubject<Person[]> = new BehaviorSubject<Person[]>([]);
+  _filterChange = new BehaviorSubject('');
+  get filter(): string { return this._filterChange.value; }
+  set filter(filter: string) { this._filterChange.next(filter); }
 
   constructor(private _personDatabase: PersonDatabase, private _sort: MdSort) {
     super();
@@ -83,15 +94,19 @@ export class PeopleDataSource extends DataSource<any> {
     const displayDataChanges = [
       this._personDatabase.dataChange,
       this._sort.mdSortChange,
+      this._filterChange,
     ];
 
     return Observable.merge(...displayDataChanges).map(() => {
-      return this.getSortedData();
+      return this.getSortedData(this._personDatabase.data.slice().filter((item: Person) => {
+        let searchStr = (item.name).toLowerCase();
+        return searchStr.indexOf(this.filter.toLowerCase()) != -1;
+      }));
     });
   }
 
-  getSortedData(): Person[] {
-    const data = this._personDatabase.data.slice();
+  getSortedData(data): Person[] {
+    data = data || this._personDatabase.data.slice();
     if (!this._sort.active || this._sort.direction == '') { return data; }
 
     return data.sort((a, b) => {
@@ -132,12 +147,6 @@ export class PersonDatabase {
       console.log('error')
     }, (res) => {
       this.dataChange.next(ppl);
-      console.log('dataChange', this.dataChange);
-      // this.people = ppl;
-      // this.dataChange.next()
-
-      // TODO
-      // this.loading = false;
     });
   }  
 
